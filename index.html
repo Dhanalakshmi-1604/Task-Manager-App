@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AetherTasks — Premium Personal Task Space</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/styles.css">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Canvas Confetti for task completion celebration -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+
+  <!-- App Wrapper -->
+  <div class="app-container">
+    
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">
+          <i data-lucide="sparkles"></i>
+        </div>
+        <span class="brand-name">AetherTasks</span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-filter="all">
+          <i data-lucide="layout-grid"></i>
+          <span>All Tasks</span>
+          <span class="badge" id="count-all">0</span>
+        </button>
+        <button class="nav-item" data-filter="active">
+          <i data-lucide="circle"></i>
+          <span>Active</span>
+          <span class="badge" id="count-active">0</span>
+        </button>
+        <button class="nav-item" data-filter="completed">
+          <i data-lucide="check-circle-2"></i>
+          <span>Completed</span>
+          <span class="badge" id="count-completed">0</span>
+        </button>
+      </nav>
+
+      <!-- Category Filter list inside Sidebar -->
+      <div class="sidebar-section">
+        <h3 class="section-title">Categories</h3>
+        <div class="category-list" id="sidebar-categories">
+          <!-- Dynamically populated categories -->
+        </div>
+      </div>
+
+      <!-- Theme Switcher & Footer -->
+      <div class="sidebar-footer">
+        <button class="theme-toggle-btn" id="theme-toggle" title="Toggle Light/Dark Mode">
+          <i data-lucide="sun" class="sun-icon"></i>
+          <i data-lucide="moon" class="moon-icon"></i>
+          <span>Switch Theme</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      
+      <!-- Top Dashboard Header -->
+      <header class="dashboard-header">
+        <div class="header-left">
+          <h1 id="greeting">Hello there!</h1>
+          <p class="current-date" id="date-display">Tuesday, May 26, 2026</p>
+        </div>
+
+        <!-- Dashboard Stats Grid -->
+        <div class="stats-container">
+          <div class="stat-card">
+            <div class="stat-info">
+              <span class="stat-value" id="stat-progress-text">0%</span>
+              <span class="stat-label">Completion</span>
+            </div>
+            <div class="progress-ring-container">
+              <svg class="progress-ring" width="56" height="56">
+                <circle class="progress-ring-bg" stroke="rgba(255,255,255,0.06)" stroke-width="4" fill="transparent" r="24" cx="28" cy="28"/>
+                <circle class="progress-ring-circle" id="progress-circle" stroke="var(--accent-primary)" stroke-width="4" fill="transparent" r="24" cx="28" cy="28"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="stat-card-simple">
+            <span class="stat-number" id="stat-total">0</span>
+            <span class="stat-label">Total Tasks</span>
+          </div>
+          <div class="stat-card-simple">
+            <span class="stat-number text-emerald" id="stat-completed">0</span>
+            <span class="stat-label">Completed</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Toolbar / Search and Filters -->
+      <section class="toolbar">
+        <div class="search-wrapper">
+          <i data-lucide="search" class="search-icon"></i>
+          <input type="text" id="search-input" placeholder="Search tasks by title or details...">
+        </div>
+
+        <div class="filters-wrapper">
+          <!-- Priority Filter -->
+          <div class="select-wrapper">
+            <i data-lucide="flag" class="select-icon"></i>
+            <select id="priority-filter">
+              <option value="all">Any Priority</option>
+              <option value="high">High Priority</option>
+              <option value="medium">Medium Priority</option>
+              <option value="low">Low Priority</option>
+            </select>
+          </div>
+
+          <!-- Sort Select -->
+          <div class="select-wrapper">
+            <i data-lucide="sliders-horizontal" class="select-icon"></i>
+            <select id="sort-select">
+              <option value="newest">Newest First</option>
+              <option value="oldest">Oldest First</option>
+              <option value="dueDate">Due Date</option>
+              <option value="priority">Priority Order</option>
+            </select>
+          </div>
+
+          <!-- Add Task Button -->
+          <button class="btn btn-primary" id="open-add-dialog-btn">
+            <i data-lucide="plus"></i>
+            <span>Add Task</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Main Tasks Grid / List -->
+      <section class="task-section">
+        <!-- Active Filter Bar (Horizontal Pill badges on Mobile/Tablet if Sidebar is minimized) -->
+        <div class="active-filter-indicator" id="active-filter-indicator">
+          Showing <strong id="filter-display-name">All</strong> Tasks
+        </div>
+
+        <!-- Task List container -->
+        <div class="task-list-grid" id="task-list">
+          <!-- Tasks dynamically loaded here -->
+        </div>
+
+        <!-- Empty State Container -->
+        <div class="empty-state" id="empty-state">
+          <div class="empty-state-icon">
+            <i data-lucide="inbox"></i>
+          </div>
+          <h2>Clear Horizon</h2>
+          <p>No tasks found matching your criteria. Start fresh by adding a task!</p>
+          <button class="btn btn-secondary btn-sm" id="empty-state-add-btn">
+            <i data-lucide="plus"></i> Create first task
+          </button>
+        </div>
+      </section>
+    </main>
+
+  </div>
+
+  <!-- Add/Edit Task Dialog (Modal) -->
+  <dialog class="dialog-modal" id="task-modal">
+    <div class="modal-content">
+      <header class="modal-header">
+        <h2 id="modal-title">Create Task</h2>
+        <button class="modal-close-btn" id="close-modal-btn">&times;</button>
+      </header>
+
+      <form id="task-form" method="dialog">
+        <input type="hidden" id="task-id">
+        
+        <div class="form-group">
+          <label for="task-title-input">Task Title *</label>
+          <input type="text" id="task-title-input" required placeholder="What needs to be done?" autocomplete="off">
+        </div>
+
+        <div class="form-group">
+          <label for="task-desc-input">Description</label>
+          <textarea id="task-desc-input" rows="3" placeholder="Add some context or detailed notes..."></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="task-priority-input">Priority</label>
+            <select id="task-priority-input">
+              <option value="low">Low Priority</option>
+              <option value="medium" selected>Medium Priority</option>
+              <option value="high">High Priority</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="task-category-input">Category</label>
+            <select id="task-category-input">
+              <!-- Dynamically populated from script -->
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="task-date-input">Due Date</label>
+          <input type="date" id="task-date-input">
+        </div>
+
+        <footer class="modal-footer">
+          <button type="button" class="btn btn-ghost" id="cancel-modal-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="save-task-btn">Save Task</button>
+        </footer>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Application Script -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
