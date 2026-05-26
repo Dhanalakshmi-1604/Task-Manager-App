@@ -564,6 +564,45 @@ function initEventListeners() {
     saveTheme(newTheme);
     showToast(`Switched to ${newTheme} theme`, 'info');
   });
+
+  // Global Keyboard Shortcuts
+  window.addEventListener('keydown', (e) => {
+    // If the user is typing in an input, select, or textarea, don't trigger global shortcuts
+    const activeEl = document.activeElement;
+    const isTyping = activeEl && (
+      activeEl.tagName === 'INPUT' || 
+      activeEl.tagName === 'TEXTAREA' || 
+      activeEl.isContentEditable ||
+      activeEl.tagName === 'SELECT'
+    );
+
+    if (isTyping) {
+      // Escape key unfocuses search input
+      if (e.key === 'Escape' && activeEl === searchInput) {
+        searchInput.blur();
+      }
+      return;
+    }
+
+    // Press 'N' or 'n' -> Open Create Task Dialog
+    if (e.key.toLowerCase() === 'n') {
+      e.preventDefault();
+      openAddTaskDialog();
+    }
+
+    // Press '/' -> Focus Search input
+    if (e.key === '/') {
+      e.preventDefault();
+      searchInput.focus();
+      searchInput.select();
+    }
+
+    // Press 'T' or 't' -> Toggle Theme
+    if (e.key.toLowerCase() === 't') {
+      e.preventDefault();
+      themeToggleBtn.click();
+    }
+  });
 }
 
 /* -------------------------------------------------------------
